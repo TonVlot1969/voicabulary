@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Voicabulary - Daily English</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <h1>Voicabulary</h1>
+            <p>Your daily English boost</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main>
+            <!-- Setup Screen -->
+            <section id="setup-screen" class="screen active">
+                <div class="card glass-card">
+                    <h2>Ready to practice?</h2>
+                    <div class="duration-selector">
+                        <label for="duration">Lesson duration (minutes):</label>
+                        <select id="duration" class="custom-select">
+                            <option value="1">1 minute (Test)</option>
+                            <option value="15" selected>15 minutes</option>
+                            <option value="20">20 minutes</option>
+                            <option value="30">30 minutes</option>
+                        </select>
+                    </div>
+                    <button id="start-btn" class="primary-btn pulse-btn">
+                        <i class="fas fa-play"></i> Start Lesson
+                    </button>
+                </div>
+
+                <div class="card integration-card">
+                    <h3><i class="far fa-calendar-check"></i> Schedule Sessions</h3>
+                    <p class="subtitle">Add a recurring reminder to your Google Calendar</p>
+                    <div class="calendar-buttons">
+                        <button id="cal-mon-wed" class="secondary-btn">
+                            <i class="far fa-calendar-plus"></i> Mon & Wed (07:30)
+                        </button>
+                        <button id="cal-tue-thu-fri" class="secondary-btn">
+                            <i class="far fa-calendar-plus"></i> Tue, Thu, Fri (08:30)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Screen -->
+            <section id="learning-screen" class="screen">
+                <div class="status-indicator">
+                    <div class="timer" id="timer">15:00</div>
+                    <div class="progress">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="interaction-area glass-card">
+                    <div id="ai-status" class="status-text">Getting ready...</div>
+                    
+                    <div class="voice-visualizer" id="visualizer">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                    </div>
+                    
+                    <div class="current-word-display" id="word-display">
+                        <h2 id="target-word">--</h2>
+                        <p id="word-translation" class="hidden">--</p>
+                        <p id="word-context" class="hidden context-text">--</p>
+                    </div>
+
+                    <div class="controls">
+                        <button id="mic-btn" class="mic-btn disabled">
+                            <i class="fas fa-microphone"></i>
+                        </button>
+                        <p class="mic-hint" id="mic-hint">App is speaking...</p>
+                    </div>
+                </div>
+                
+                <div class="bottom-controls">
+                    <button id="skip-btn" class="text-btn"><i class="fas fa-forward"></i> Skip</button>
+                    <button id="end-early-btn" class="text-btn danger"><i class="fas fa-stop"></i> End Early</button>
+                </div>
+            </section>
+
+            <!-- Summary Screen -->
+            <section id="summary-screen" class="screen">
+                <div class="card success-card glass-card">
+                    <div class="success-icon-wrap">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Lesson Complete!</h2>
+                    <p>Great job! You practiced <span id="words-managed" class="highlight">0</span> words today.</p>
+                    
+                    <div class="word-list-preview styled-scrollbar" id="word-list-preview">
+                        <!-- Words injected via JS -->
+                    </div>
+
+                    <button id="export-keep-btn" class="primary-btn">
+                        <i class="fas fa-share-nodes"></i> Save to Google Keep
+                    </button>
+                    <button id="home-btn" class="text-btn return-btn">Back to Home</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="words.js"></script>
+    <script src="integrations.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

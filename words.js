@@ -1,0 +1,22 @@
+const wordDatabase = [
+    { eng: "Ubiquitous", nl: "Alomtegenwoordig", context: "Smartphones have become ubiquitous in modern society.", category: "Advanced" },
+    { eng: "Pertinent", nl: "Relevant", context: "Please keep your questions pertinent to the topic.", category: "Business" },
+    { eng: "Alleviate", nl: "Verlichten", context: "This medicine will alleviate the pain.", category: "Advanced" },
+    { eng: "Ambiguous", nl: "Dubbelzinnig", context: "His answer was too ambiguous to be helpful.", category: "Advanced" },
+    { eng: "Mitigate", nl: "Verzachten", context: "We need to mitigate the risks before proceeding.", category: "Business" },
+    { eng: "Synergy", nl: "Synergie", context: "The synergy between our teams is excellent.", category: "Business" },
+    { eng: "Feasible", nl: "Haalbaar", context: "Is it feasible to finish this by Friday?", category: "Business" },
+    { eng: "Resilient", nl: "Veerkrachtig", context: "The company proved to be highly resilient during the crisis.", category: "Advanced" },
+    { eng: "Lucrative", nl: "Winstgevend", context: "They signed a highly lucrative contract.", category: "Business" },
+    { eng: "Eloquent", nl: "Welsprekend", context: "She gave an eloquent speech at the conference.", category: "Advanced" },
+    { eng: "Pragmatic", nl: "Pragmatisch", context: "We need a pragmatic approach to this problem.", category: "Business" },
+    { eng: "Diligence", nl: "Toewijding", context: "He was promoted for his diligence and hard work.", category: "Business" },
+    { eng: "Tedious", nl: "Saai", context: "Data entry can be a very tedious task.", category: "Advanced" },
+    { eng: "Leverage", nl: "Benutten", context: "We must leverage our resources effectively.", category: "Business" },
+    { eng: "Vulnerable", nl: "Kwetsbaar", context: "The system is vulnerable to cyber attacks.", category: "Advanced" },
+    { eng: "Consensus", nl: "Overeenstemming", context: "We eventually reached a consensus on the new policy.", category: "Business" },
+    { eng: "Scrutinize", nl: "Onderzoeken", context: "We must scrutinize the contract before signing.", category: "Business" },
+    { eng: "Inevitable", nl: "Onvermijdelijk", context: "Change in the tech industry is inevitable.", category: "Advanced" },
+    { eng: "Tangible", nl: "Tastbaar", context: "We need tangible results by the end of the quarter.", category: "Business" },
+    { eng: "Subtle", nl: "Subtiel", context: "There is a subtle difference between the two concepts.", category: "Advanced" }
+];
