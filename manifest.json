@@ -1,0 +1,17 @@
+{
+  "name": "Voicabulary - Daily English",
+  "short_name": "Voicabulary",
+  "description": "Your daily voice-based English boost",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
