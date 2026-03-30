@@ -1,5 +1,5 @@
 /**
- * Voicabulary Core App Logic
+ * Voicabulary Core App Logic - Upgraded with SRS and Car Mode
  */
 
 const state = {
@@ -11,7 +11,15 @@ const state = {
     isPlaying: false,
     timerInterval: null,
     lessonType: 0,
-    aiSpeaking: false
+    aiSpeaking: false,
+    
+    // Spaced Repetition & Progress
+    masteryData: JSON.parse(localStorage.getItem('voicabulary_mastery') || '{}'),
+    MASTERY_THRESHOLD: 3,
+
+    // CarPlay / Car Mode
+    carModeActive: false,
+    dummyMediaStream: null
 };
 
 // Speech Synthesis & Recognition
@@ -23,7 +31,7 @@ if (SpeechRecognition) {
     recognition = new SpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = 'en-US'; // We expect English answers for most exercises
+    recognition.lang = 'en-US'; 
 }
 
 // Elements
@@ -34,6 +42,7 @@ const el = {
         summary: document.getElementById('summary-screen')
     },
     duration: document.getElementById('duration'),
+    carModeSwitch: document.getElementById('car-mode-switch'),
     startBtn: document.getElementById('start-btn'),
     timer: document.getElementById('timer'),
     progressBar: document.getElementById('progress-bar'),
@@ -73,6 +82,9 @@ function init() {
     } else {
         alert("Let op: Spraakherkenning wordt niet ondersteund in deze browser. Gebruik Chrome of Safari op mobiel voor de beste ervaring.");
     }
+
+    // Initialize UI count for user info
+    console.log(`Loaded ${state.words.length} words. Mastered: ${Object.values(state.masteryData).filter(s => s >= state.MASTERY_THRESHOLD).length}`);
 }
 
 function showScreen(screenKey) {
@@ -80,7 +92,31 @@ function showScreen(screenKey) {
     el.screens[screenKey].classList.add('active');
 }
 
-function startLesson() {
+async function startLesson() {
+    state.carModeActive = el.carModeSwitch ? el.carModeSwitch.checked : false;
+    
+    if (state.carModeActive) {
+        document.body.classList.add('car-mode-active');
+        try {
+            // CarPlay Hack: Acquire microphone explicitly and keep it warm
+            // This prevents Android Auto / CarPlay from dropping Bluetooth HFP connection
+            state.dummyMediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Try to keep screen awake via WakeLock if available
+            if ('wakeLock' in navigator) {
+                try {
+                    await navigator.wakeLock.request('screen');
+                } catch (err) {
+                    console.log("WakeLock not available", err);
+                }
+            }
+        } catch (e) {
+            console.error("Kon microfoon niet permanent openzetten voor Car Mode:", e);
+        }
+    } else {
+        document.body.classList.remove('car-mode-active');
+    }
+
     const mins = parseInt(el.duration.value);
     state.totalTimeMs = mins * 60 * 1000;
     state.timeRemainingMs = state.totalTimeMs;
@@ -92,7 +128,6 @@ function startLesson() {
 
     showScreen('learning');
 
-    // Force initialization of speech synth on user interaction
     if (synth.getVoices().length === 0) {
         synth.onvoiceschanged = () => {};
     }
@@ -123,11 +158,29 @@ function updateTimerDisplay() {
 }
 
 function getNextWord() {
-    const unpracticed = state.words.filter(w => !state.practicedWords.includes(w));
-    if (unpracticed.length > 0) {
-        return unpracticed[Math.floor(Math.random() * unpracticed.length)];
+    // Exclude currently practiced words during this session
+    const validPool = state.words.filter(w => !state.practicedWords.includes(w));
+    
+    if (validPool.length === 0) {
+        // Fallback if they exhausted literally all 100 words in one session
+        return state.words[Math.floor(Math.random() * state.words.length)];
     }
-    return state.words[Math.floor(Math.random() * state.words.length)];
+
+    // Filter out mastered words specifically
+    let unmastered = validPool.filter(w => (state.masteryData[w.id] || 0) < state.MASTERY_THRESHOLD);
+    
+    if (unmastered.length > 0) {
+        // Weigh heavily towards lowest score words (Score 0 vs Score 2)
+        // Sort by score ascending, pick from the bottom half 
+        unmastered.sort((a,b) => (state.masteryData[a.id] || 0) - (state.masteryData[b.id] || 0));
+        
+        // Take a slice of the lowest scored words to pick from randomly (avoids completely predictable order)
+        let focusSlice = unmastered.slice(0, Math.max(5, Math.floor(unmastered.length / 3)));
+        return focusSlice[Math.floor(Math.random() * focusSlice.length)];
+    } else {
+        // Wow, they mastered everything, just pick randomly from the pool
+        return validPool[Math.floor(Math.random() * validPool.length)];
+    }
 }
 
 function nextWord() {
@@ -228,9 +281,20 @@ function handleSpeechResult(event) {
 
     if (transcript.includes(targetClean)) {
         setUIStatus("Correct!", "app");
+        
+        // Progress System: Increase score and save
+        const wId = state.currentWord.id;
+        state.masteryData[wId] = (state.masteryData[wId] || 0) + 1;
+        localStorage.setItem('voicabulary_mastery', JSON.stringify(state.masteryData));
+        
+        if (state.masteryData[wId] >= state.MASTERY_THRESHOLD) {
+             console.log(`Word mastered! ${targetClean}`);
+        }
+
         speak(`Excellent! ${state.currentWord.context}`, 'en-US', () => handleWordCompletion(false));
     } else {
         setUIStatus("Not quite...", "app");
+        // We do not decrease score on failure so it stays encouraging.
         speak(`Almost. The correct word is ${state.currentWord.eng}. ${state.currentWord.context}`, 'en-US', () => handleWordCompletion(false));
     }
 }
@@ -246,7 +310,6 @@ function handleSpeechError(event) {
 
 function handleSpeechEnd() {
     if (state.isPlaying && !state.aiSpeaking) {
-        // If it ended automatically (e.g. timeout), set back to waiting mode
         setUIStatus("Tap mic to speak", "waiting");
     }
 }
@@ -268,6 +331,12 @@ function endLesson() {
     clearInterval(state.timerInterval);
     synth.cancel();
     if(recognition) recognition.stop();
+
+    // Release Dummy Media Stream for Car Mode
+    if (state.dummyMediaStream) {
+        state.dummyMediaStream.getTracks().forEach(track => track.stop());
+        state.dummyMediaStream = null;
+    }
 
     // Populate summary
     el.wordsManaged.innerText = state.practicedWords.length;
