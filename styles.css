@@ -628,3 +628,61 @@ body.car-mode-active .current-word-display p,
 body.car-mode-active .context-text {
     font-size: 1.5rem !important;
 }
+
+/* Dashboard Items */
+.dashboard-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.95rem;
+}
+
+.dashboard-item:last-child {
+    border-bottom: none;
+}
+
+.word-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+}
+
+.word-info strong {
+    color: var(--text-primary);
+}
+
+.word-info span {
+    color: var(--text-secondary);
+}
+
+.word-scores {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--accent);
+}
+
+.word-scores span {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Mastered State */
+.dashboard-item.mastered {
+    opacity: 0.5;
+}
+
+.dashboard-item.mastered .word-info strong,
+.dashboard-item.mastered .word-info span {
+    text-decoration: line-through;
+}
+
+/* Highlight today's practice */
+.dashboard-item.practiced-today {
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: 8px;
+    padding: 0.8rem;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}

@@ -18,8 +18,7 @@ const state = {
     MASTERY_THRESHOLD: 3,
 
     // CarPlay / Car Mode
-    carModeActive: false,
-    dummyMediaStream: null
+    carModeActive: false
 };
 
 // Speech Synthesis & Recognition
@@ -97,21 +96,14 @@ async function startLesson() {
     
     if (state.carModeActive) {
         document.body.classList.add('car-mode-active');
-        try {
-            // CarPlay Hack: Acquire microphone explicitly and keep it warm
-            // This prevents Android Auto / CarPlay from dropping Bluetooth HFP connection
-            state.dummyMediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            
-            // Try to keep screen awake via WakeLock if available
-            if ('wakeLock' in navigator) {
-                try {
-                    await navigator.wakeLock.request('screen');
-                } catch (err) {
-                    console.log("WakeLock not available", err);
-                }
+        // We removed the dummyMediaStream because it conflicts with SpeechRecognition on many cars.
+        // Try to keep screen awake via WakeLock if available so the phone stays active.
+        if ('wakeLock' in navigator) {
+            try {
+                await navigator.wakeLock.request('screen');
+            } catch (err) {
+                console.log("WakeLock not available", err);
             }
-        } catch (e) {
-            console.error("Kon microfoon niet permanent openzetten voor Car Mode:", e);
         }
     } else {
         document.body.classList.remove('car-mode-active');
@@ -166,13 +158,24 @@ function getNextWord() {
         return state.words[Math.floor(Math.random() * state.words.length)];
     }
 
-    // Filter out mastered words specifically
-    let unmastered = validPool.filter(w => (state.masteryData[w.id] || 0) < state.MASTERY_THRESHOLD);
+    // Filter out mastered words specifically (Mastered = both trans & pron >= 3)
+    let unmastered = validPool.filter(w => {
+        let scores = state.masteryData[w.id] || { trans: 0, pron: 0 };
+        // Handle old data structure migration (if it was an integer)
+        if (typeof scores === 'number') {
+            scores = { trans: 0, pron: 0 }; 
+            state.masteryData[w.id] = scores;
+        }
+        return scores.trans < state.MASTERY_THRESHOLD || scores.pron < state.MASTERY_THRESHOLD;
+    });
     
     if (unmastered.length > 0) {
-        // Weigh heavily towards lowest score words (Score 0 vs Score 2)
-        // Sort by score ascending, pick from the bottom half 
-        unmastered.sort((a,b) => (state.masteryData[a.id] || 0) - (state.masteryData[b.id] || 0));
+        // Sort by total score ascending (so we prioritize words with score 0/0)
+        unmastered.sort((a,b) => {
+            let sa = state.masteryData[a.id] || { trans: 0, pron: 0 };
+            let sb = state.masteryData[b.id] || { trans: 0, pron: 0 };
+            return (sa.trans + sa.pron) - (sb.trans + sb.pron);
+        });
         
         // Take a slice of the lowest scored words to pick from randomly (avoids completely predictable order)
         let focusSlice = unmastered.slice(0, Math.max(5, Math.floor(unmastered.length / 3)));
@@ -282,13 +285,25 @@ function handleSpeechResult(event) {
     if (transcript.includes(targetClean)) {
         setUIStatus("Correct!", "app");
         
-        // Progress System: Increase score and save
+        // Progress System: Increase split score and save
         const wId = state.currentWord.id;
-        state.masteryData[wId] = (state.masteryData[wId] || 0) + 1;
+        
+        // Initialize or fix old format
+        if (typeof state.masteryData[wId] !== 'object') {
+            state.masteryData[wId] = { trans: 0, pron: 0 };
+        }
+        
+        if (state.lessonType === 1) {
+            state.masteryData[wId].trans = Math.min(state.masteryData[wId].trans + 1, state.MASTERY_THRESHOLD);
+        } else {
+            state.masteryData[wId].pron = Math.min(state.masteryData[wId].pron + 1, state.MASTERY_THRESHOLD);
+        }
+        
         localStorage.setItem('voicabulary_mastery', JSON.stringify(state.masteryData));
         
-        if (state.masteryData[wId] >= state.MASTERY_THRESHOLD) {
-             console.log(`Word mastered! ${targetClean}`);
+        const m = state.masteryData[wId];
+        if (m.trans >= state.MASTERY_THRESHOLD && m.pron >= state.MASTERY_THRESHOLD) {
+             console.log(`Word fully mastered! ${targetClean}`);
         }
 
         speak(`Excellent! ${state.currentWord.context}`, 'en-US', () => handleWordCompletion(false));
@@ -332,20 +347,29 @@ function endLesson() {
     synth.cancel();
     if(recognition) recognition.stop();
 
-    // Release Dummy Media Stream for Car Mode
-    if (state.dummyMediaStream) {
-        state.dummyMediaStream.getTracks().forEach(track => track.stop());
-        state.dummyMediaStream = null;
-    }
-
-    // Populate summary
+    // Populate dashboard with ALL 100 words showing their scores
     el.wordsManaged.innerText = state.practicedWords.length;
     el.wordListPreview.innerHTML = '';
     
-    state.practicedWords.forEach(w => {
+    state.words.forEach(w => {
+        let scores = state.masteryData[w.id];
+        if (typeof scores !== 'object') scores = { trans: 0, pron: 0 };
+        
+        const isMastered = scores.trans >= state.MASTERY_THRESHOLD && scores.pron >= state.MASTERY_THRESHOLD;
+        const wasPracticedToday = state.practicedWords.includes(w);
+        
         const div = document.createElement('div');
-        div.className = 'word-item';
-        div.innerHTML = `<span>${w.eng}</span> <span>${w.nl}</span>`;
+        div.className = `dashboard-item ${isMastered ? 'mastered' : ''} ${wasPracticedToday ? 'practiced-today' : ''}`;
+        
+        div.innerHTML = `
+            <div class="word-info">
+                <strong>${w.eng}</strong> <span>${w.nl}</span>
+            </div>
+            <div class="word-scores">
+                <span title="Vertaling Score"><i class="fas fa-language"></i> ${scores.trans}/${state.MASTERY_THRESHOLD}</span>
+                <span title="Uitspraak Score"><i class="fas fa-microphone-lines"></i> ${scores.pron}/${state.MASTERY_THRESHOLD}</span>
+            </div>
+        `;
         el.wordListPreview.appendChild(div);
     });
 
