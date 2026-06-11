@@ -1,135 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
+<html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>AI Briefing</title>
-<style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; height: 100%; }
-  body {
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: #0d1117; color: #e6edf3;
-    display: flex; flex-direction: column;
-    min-height: 100vh; padding: 24px 20px 40px;
-  }
-  header { text-align: center; margin-bottom: 18px; }
-  header h1 { font-size: 22px; margin: 0 0 4px; }
-  header p { font-size: 14px; color: #8b949e; margin: 0; }
-  .controls { display: flex; gap: 14px; margin: 10px 0 22px; }
-  button {
-    flex: 1; border: none; border-radius: 18px;
-    font-size: 20px; font-weight: 700; padding: 28px 10px;
-    color: #fff; cursor: pointer;
-  }
-  #play  { background: #238636; }
-  #play:active { background: #1a6e2c; }
-  #pause { background: #9e6a00; }
-  #stop  { background: #b62324; }
-  #play.playing { background: #9e6a00; }
-  .big { font-size: 24px; }
-  .status { text-align: center; font-size: 14px; color: #8b949e; margin-bottom: 16px; min-height: 18px; }
-  .script {
-    background: #161b22; border: 1px solid #30363d; border-radius: 14px;
-    padding: 18px 18px 8px; font-size: 17px; line-height: 1.6; overflow-y: auto;
-  }
-  .script p { margin: 0 0 14px; }
-  .script .lead { color: #58a6ff; font-weight: 600; }
-  .sources { margin-top: 18px; font-size: 13px; color: #8b949e; }
-  .sources a { color: #58a6ff; word-break: break-all; }
-  .hint { text-align:center; font-size:12px; color:#6e7681; margin-top:22px; }
-</style>
-</head>
+<meta name="apple-mobile-web-app-capable" content="yes"><title>AI Briefing</title>
+<style>*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;padding:0;height:100%}body{font-family:-apple-system,"Segoe UI",Roboto,sans-serif;background:#0d1117;color:#e6edf3;display:flex;flex-direction:column;min-height:100vh;padding:24px 20px 40px}header{text-align:center;margin-bottom:18px}header h1{font-size:22px;margin:0 0 4px}header p{font-size:14px;color:#8b949e;margin:0}.controls{display:flex;gap:14px;margin:10px 0 22px}button{flex:1;border:none;border-radius:18px;font-size:20px;font-weight:700;padding:28px 10px;color:#fff;cursor:pointer}#play{background:#238636}#pause{background:#9e6a00}#stop{background:#b62324}.big{font-size:24px}.status{text-align:center;font-size:14px;color:#8b949e;margin-bottom:16px;min-height:18px}.script{background:#161b22;border:1px solid #30363d;border-radius:14px;padding:18px 18px 8px;font-size:17px;line-height:1.6;overflow-y:auto}.script p{margin:0 0 14px}.script .lead{color:#58a6ff;font-weight:600}.sources{margin-top:18px;font-size:13px;color:#8b949e}.sources a{color:#58a6ff;word-break:break-all}.hint{text-align:center;font-size:12px;color:#6e7681;margin-top:22px}</style></head>
 <body>
-  <header>
-    <h1>🎧 AI Briefing</h1>
-    <p id="weekstamp">Week of 9 June 2026</p>
-  </header>
-
-  <div class="controls">
-    <button id="play" class="big">▶ Play</button>
-    <button id="pause">⏸ Pause</button>
-    <button id="stop">⏹ Stop</button>
-  </div>
-  <div class="status" id="status">Tap Play to listen</div>
-
-  <div class="script" id="script">
-    <p class="lead" data-speak="Good morning Ton, here is your Monday AI briefing.">Good morning Ton, here is your Monday AI briefing.</p>
-    <p data-speak="The big theme this week is the jump from A I that helps you write a query, to A I that runs the whole workflow. Alteryx, Databricks and Snowflake all shipped features that turn data work into deployable agents. And Gartner is now saying that by the end of the year, three quarters of developers will orchestrate rather than write code.">The big theme this week is the jump from AI that helps you write a query, to AI that runs the whole workflow. Alteryx, Databricks and Snowflake all shipped features that turn data work into deployable agents. And Gartner is now saying that by the end of the year, three quarters of developers will orchestrate rather than write code.</p>
-    <p data-speak="On practical tools for your data teams. Databricks Genie added a managed connection so any agent can ask plain language questions across your data and get grounded answers. It can also now import a Power B I or Tableau workbook and rebuild it as an A I dashboard. Snowflake meanwhile lets analysts mix A I operations straight into normal SQL, so your SQL heavy people get A I without leaving familiar ground.">On practical tools for your data teams. Databricks Genie added a managed connection so any agent can ask plain-language questions across your data and get grounded answers. It can also now import a Power BI or Tableau workbook and rebuild it as an AI dashboard. Snowflake meanwhile lets analysts mix AI operations straight into normal SQL, so your SQL-heavy people get AI without leaving familiar ground.</p>
-    <p data-speak="On A I in delivery and consulting, the thing worth your attention. Gartner's prediction that most developers will orchestrate rather than code goes right at your fixed price delivery idea. Fewer hands, more orchestration, and governance becomes the hard part. I B M and Google Cloud also announced a partnership to push A I into production faster, a useful template for how the big firms are packaging A I powered delivery.">On AI in delivery and consulting, here is the thing worth your attention. Gartner's prediction that most developers will orchestrate rather than code goes right at your fixed-price delivery idea. Fewer hands, more orchestration, and governance becomes the hard part. IBM and Google Cloud also announced a partnership to push AI into production faster, a useful template for how the big firms are packaging AI-powered delivery.</p>
-    <p data-speak="And something to show. Alteryx launched Agent Studio, which lets a business analyst turn an existing data workflow into an autonomous agent, and push it into Slack or Teams. Very demo friendly if anyone on the team already uses Alteryx.">And something to show. Alteryx launched Agent Studio, which lets a business analyst turn an existing data workflow into an autonomous agent, and push it into Slack or Teams. Very demo-friendly if anyone on the team already uses Alteryx.</p>
-    <p data-speak="My pick for this week's session is the Databricks Genie feature that imports a Power B I or Tableau report and turns it into an A I dashboard. It is concrete, it is visual, and someone can drop in a real report and show the before and after in five minutes. That is exactly the, oh I could use that on Monday, moment these sessions are best at. That's your briefing. Have a good week.">My pick for this week's session is the Databricks Genie feature that imports a Power BI or Tableau report and turns it into an AI dashboard. It is concrete, it is visual, and someone can drop in a real report and show the before and after in five minutes. That is exactly the "oh, I could use that on Monday" moment these sessions are best at. That's your briefing. Have a good week.</p>
-
-    <div class="sources">
-      Sources:
-      <a href="https://docs.databricks.com/aws/en/ai-bi/release-notes/2026">Databricks AI/BI release notes</a> ·
-      <a href="https://www.snowflake.com/en/blog/ai-sql-query-language/">Snowflake Cortex AISQL</a> ·
-      <a href="https://www.cio.com/article/4170969/how-ai-is-transforming-software-development.html">CIO on AI in software delivery</a> ·
-      <a href="https://newsroom.ibm.com/2026-06-04-ibm-and-google-cloud-announce-strategic-partnership-to-scale-ai-with-human-expertise-and-ai-powered-delivery">IBM + Google Cloud</a> ·
-      <a href="https://nvidianews.nvidia.com/news/enterprise-software-leaders-build-ai-agents-with-nvidia">Alteryx Agent Studio (via NVIDIA)</a>
-    </div>
-  </div>
-
-  <p class="hint">Add to Home Screen for one-tap access. Plays through your car's Bluetooth.</p>
-
+<header><h1>🎧 AI Briefing</h1><p id="weekstamp">11 June 2026</p></header>
+<div class="controls"><button id="play" class="big">▶ Play</button><button id="pause">⏸ Pause</button><button id="stop">⏹ Stop</button></div>
+<div class="status" id="status">Tap Play to listen</div>
+<div class="script" id="script">
+<p class="lead" data-speak="Good morning Ton, here is your Monday A I briefing. This week the big theme is that your data tools are quietly turning into agents, and the consulting world is starting to sweat about what that means for billable hours.">Good morning Ton, here is your Monday AI briefing. This week the big theme is that your data tools are quietly turning into agents, and the consulting world is starting to sweat about what that means for billable hours.</p>
+<p data-speak="Start with the practical stuff for your teams. Databricks shipped a wave of updates to Genie this month. The headline one is Genie Ontology, which automatically builds a map of your business by reading your existing dashboards, notebooks and pipelines, so the answers get sharper without anyone hand feeding it context. Even better for your B I people, you can now drop a Tableau or Power B I file straight into Genie and it rebuilds the dashboard for you. Microsoft also pushed its June Power B I and Fabric update, including Fabric Apps, an A I first way to build data apps straight on top of your semantic models. Both of these mean less plumbing, more answering questions.">Start with the practical stuff for your teams. Databricks shipped a wave of updates to Genie this month. The headline one is Genie Ontology, which automatically builds a map of your business by reading your existing dashboards, notebooks and pipelines, so the answers get sharper without anyone hand feeding it context. Even better for your BI people, you can now drop a Tableau or Power BI file straight into Genie and it rebuilds the dashboard for you. Microsoft also pushed its June Power BI and Fabric update, including Fabric Apps, an AI first way to build data apps straight on top of your semantic models. Both of these mean less plumbing, more answering questions.</p>
+<p data-speak="Now the delivery and consulting angle, which is right in your lane. A fresh 2026 consulting review made a sharp point. A I already makes consultants far more productive, but firms are slow to deploy it fully because it shrinks the billable hours they sell. That is exactly the tension your fixed price A I delivery model sidesteps. When you own the outcome, not the hours, productivity becomes your margin, not your enemy. Worth saying out loud to your teams.">Now the delivery and consulting angle, which is right in your lane. A fresh 2026 consulting review made a sharp point. AI already makes consultants far more productive, but firms are slow to deploy it fully because it shrinks the billable hours they sell. That is exactly the tension your fixed price AI delivery model sidesteps. When you own the outcome, not the hours, productivity becomes your margin, not your enemy. Worth saying out loud to your teams.</p>
+<p data-speak="For something a colleague can actually demo, Alteryx just previewed Agent Studio, which turns an existing data workflow into an autonomous agent without writing code. Very visual, very on theme for the session.">For something a colleague can actually demo, Alteryx just previewed Agent Studio, which turns an existing data workflow into an autonomous agent without writing code. Very visual, very on theme for the session.</p>
+<p data-speak="My recommendation. Demo the Databricks Genie trick of importing a Power B I file and then chatting with it in plain language. It is live, it is visual, and every data consultant in the room will instantly see the time it saves. Have a good week.">My recommendation. Demo the Databricks Genie trick of importing a Power BI file and then chatting with it in plain language. It is live, it is visual, and every data consultant in the room will instantly see the time it saves. Have a good week.</p>
+<div class="sources">Sources: <a href="https://learn.microsoft.com/en-us/azure/databricks/ai-bi/release-notes/2026">Databricks AI/BI &amp; Genie release notes 2026</a> · <a href="https://community.fabric.microsoft.com/t5/Power-BI-Updates-Blog/Power-BI-June-2026-Feature-Summary/ba-p/5193264">Power BI June 2026 Feature Summary</a> · <a href="https://futureofconsulting.ai/ai-leadership/2026-consultings-ai-revolution-update/">Future of Consulting: 2026 AI Revolution Update</a> · <a href="https://enterprisedna.co/resources/news/alteryx-agent-studio-inspire-2026-analytics-ai-agents/">Alteryx Agent Studio at Inspire 2026</a></div>
+</div>
+<p class="hint">Add to Home Screen for one-tap access. Plays through your car's Bluetooth.</p>
 <script>
-(function () {
-  var synth = window.speechSynthesis;
-  var playBtn = document.getElementById('play');
-  var pauseBtn = document.getElementById('pause');
-  var stopBtn = document.getElementById('stop');
-  var status = document.getElementById('status');
-
-  // Build the spoken text from the paragraphs marked with data-speak.
-  var parts = [].slice.call(document.querySelectorAll('[data-speak]'))
-    .map(function (el) { return el.getAttribute('data-speak'); });
-  var fullText = parts.join(' ');
-
-  var chosenVoice = null;
-  function pickVoice() {
-    var voices = synth.getVoices() || [];
-    // Prefer an English voice, ideally a natural/Google/Microsoft one.
-    chosenVoice =
-      voices.find(function (v) { return /en[-_]GB/i.test(v.lang) && /google|natural|premium/i.test(v.name); }) ||
-      voices.find(function (v) { return /en[-_]US/i.test(v.lang) && /google|natural|premium/i.test(v.name); }) ||
-      voices.find(function (v) { return /^en/i.test(v.lang); }) ||
-      voices[0] || null;
-  }
-  pickVoice();
-  if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = pickVoice;
-
-  var paused = false;
-
-  function speak() {
-    if (!('speechSynthesis' in window)) {
-      status.textContent = 'Sorry, this browser has no built-in voice.';
-      return;
-    }
-    synth.cancel();
-    var u = new SpeechSynthesisUtterance(fullText);
-    if (chosenVoice) u.voice = chosenVoice;
-    u.rate = 1.0; u.pitch = 1.0; u.lang = chosenVoice ? chosenVoice.lang : 'en-GB';
-    u.onstart = function () { status.textContent = '▶ Playing…'; playBtn.classList.add('playing'); playBtn.textContent = '▶ Playing'; };
-    u.onend = function () { status.textContent = 'Done. Have a good week.'; playBtn.classList.remove('playing'); playBtn.textContent = '▶ Play'; paused = false; };
-    u.onerror = function () { status.textContent = 'Playback stopped.'; playBtn.classList.remove('playing'); playBtn.textContent = '▶ Play'; };
-    paused = false;
-    synth.speak(u);
-  }
-
-  playBtn.addEventListener('click', function () {
-    if (paused) { synth.resume(); paused = false; status.textContent = '▶ Playing…'; return; }
-    speak();
-  });
-  pauseBtn.addEventListener('click', function () {
-    if (synth.speaking && !paused) { synth.pause(); paused = true; status.textContent = '⏸ Paused'; }
-  });
-  stopBtn.addEventListener('click', function () {
-    synth.cancel(); paused = false; status.textContent = 'Stopped'; playBtn.classList.remove('playing'); playBtn.textContent = '▶ Play';
-  });
-})();
-</script>
-</body>
-</html>
+(function(){var synth=window.speechSynthesis;var playBtn=document.getElementById('play');var pauseBtn=document.getElementById('pause');var stopBtn=document.getElementById('stop');var status=document.getElementById('status');var parts=[].slice.call(document.querySelectorAll('[data-speak]')).map(function(el){return el.getAttribute('data-speak')});var fullText=parts.join(' ');var chosenVoice=null;function pickVoice(){var voices=synth.getVoices()||[];chosenVoice=voices.find(function(v){return /en[-_]GB/i.test(v.lang)&&/google|natural|premium/i.test(v.name)})||voices.find(function(v){return /en[-_]US/i.test(v.lang)&&/google|natural|premium/i.test(v.name)})||voices.find(function(v){return /^en/i.test(v.lang)})||voices[0]||null}pickVoice();if(synth.onvoiceschanged!==undefined)synth.onvoiceschanged=pickVoice;var paused=false;function speak(){if(!('speechSynthesis' in window)){status.textContent='Sorry, this browser has no built-in voice.';return}synth.cancel();var u=new SpeechSynthesisUtterance(fullText);if(chosenVoice)u.voice=chosenVoice;u.rate=1.0;u.pitch=1.0;u.lang=chosenVoice?chosenVoice.lang:'en-GB';u.onstart=function(){status.textContent='▶ Playing…';playBtn.textContent='▶ Playing'};u.onend=function(){status.textContent='Done. Have a good week.';playBtn.textContent='▶ Play';paused=false};u.onerror=function(){status.textContent='Playback stopped.';playBtn.textContent='▶ Play'};paused=false;synth.speak(u)}playBtn.addEventListener('click',function(){if(paused){synth.resume();paused=false;status.textContent='▶ Playing…';return}speak()});pauseBtn.addEventListener('click',function(){if(synth.speaking&&!paused){synth.pause();paused=true;status.textContent='⏸ Paused'}});stopBtn.addEventListener('click',function(){synth.cancel();paused=false;status.textContent='Stopped';playBtn.textContent='▶ Play'})})();
+</script></body></html>
